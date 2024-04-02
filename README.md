@@ -1,66 +1,60 @@
-# corners
+# NDCT
 
-A very customizable [SDDM](https://github.com/sddm/sddm) theme that places controls on your screen corners.
+Nix Dynamic Color Theme for [SDDM](https://github.com/sddm/sddm) that is inspired by [corners](https://github.com/aczw/sddm-theme-corners).
 
-<img src="docs/glacier.png" width="45%"></img>
-<img src="docs/hanako.png" width="45%"></img>
-<img src="docs/loud.png" width="45%"></img>
-<img src="docs/sky.png" width="45%"></img>
+Thanks for developers of [lutgen-rs](https://github.com/ozwaldorf/lutgen-rs).
 
-I couldn't really find a preexisting theme that I liked, so I made my own. Layout inspired by [sddm-chinese-painting-theme](https://github.com/fralonra/sddm-chinese-painting-theme).
-
-## Dependencies
-
-This theme does not require KDE Plasma, so make sure you have Qt 5 installed!
-
-- SDDM
-- Qt 5
-- Qt Graphical Effects
-- Qt SVG
-- Qt Quick Controls 2
-
-On Arch, run
-
-```sh
-pacman -Syu sddm qt5-graphicaleffects qt5-svg qt5-quickcontrols2
-```
+<img src="assets/sample1.png" width="45%"></img>
 
 ## Installation
 
-### From the AUR
+Package is meant to be installed only on NixOS, otherwise just install [original package](https://github.com/aczw/sddm-theme-corners)
 
-For Arch users, the theme is available from the AUR [here](https://aur.archlinux.org/packages/sddm-theme-corners-git). Install it with your favorite AUR helper:
+### NixOS
 
-```sh
-paru sddm-theme-corners-git
-```
+Just add this flake as an input and reference its package output for installation. Then use it within your config by name for sddm theme.
 
-### Manually
+```nix
+inputs.ndct-sddm.url = "github:id3v1669/ndct-sddm-corners";
+inputs.ndct-sddm.inputs.nixpkgs.follows = "nixpkgs";
 
-On other distros, download/clone this repo, and copy the `corners/` folder to `/usr/share/sddm/themes/`.
+...
 
-```sh
-git clone https://github.com/aczw/sddm-theme-corners.git
-cd sddm-theme-corners/
-sudo cp -r corners/ /usr/share/sddm/themes/
+inputs.ndct-sddm.packages.${pkgs.hostPlatform.system}.ndct-sddm-corners
+
+...
+
+services.xserver = {
+    enable = true;
+
+    libinput.enable = true;
+    displayManager = {
+      sddm = {
+        enable = true;
+        extraPackages = with pkgs; [
+          libsForQt5.qt5.qtgraphicaleffects
+        ];
+        theme = "ndct";
+      };
+    };
+  };
+
 ```
 
 ## Configuration
 
-Figured people would want to tinker on their own, so font, colors, size, corner radius, and more can all be configured. Please see [CONFIG.md](CONFIG.md) for a description of what each option does!
+To edit colors, use 'override'
+```nix
 
-If you haven't already, make sure to change the current theme that SDDM is using. On Arch, create a `.conf` file in `/etc/sddm.conf.d/` with the following contents:
+inputs.ndct-sddm.packages.${pkgs.hostPlatform.system}.ndct-sddm-corners.override {
+  base00 = "000000";
+  base01 = "0000AA";
 
-```conf
-[Theme]
-Current=corners
+  ...
+
+}
+
 ```
-
-Check the [Arch Wiki](https://wiki.archlinux.org/title/SDDM#Configuration) for more info.
-
-You'll definitely want to configure the theme before using it. Out of the box it uses [Atkinson Hyperlegible](https://fonts.google.com/specimen/Atkinson+Hyperlegible) for the font and assumes a screen DPI of 216 (basically, my setup).
-
-Edit `theme.conf` (inside `corners/`) as you see fit. I tried making most stuff customizable, but lemme know if you want more options.
 
 ## License
 
