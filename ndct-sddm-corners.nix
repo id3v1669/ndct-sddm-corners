@@ -27,8 +27,8 @@ stdenvNoCC.mkDerivation {
   src = fetchFromGitHub {
     owner = "id3v1669";
     repo = "ndct-sddm-corners";
-    rev = "";
-    hash = "";
+    rev = "72488ad33aa7bd7335b999cb5c38e8041b3e631e";
+    hash = "sha256-cnegaKN42Cg8ZoEhS4rq63wuk4NI/yXHNAktGDZ6A90=";
   };
 
   dontConfigure = true;
@@ -51,7 +51,7 @@ stdenvNoCC.mkDerivation {
     sed -i "s/3a3a3a/${base01}/g" ${gp}/theme.conf
 
     rm -rf ${gp}/backgrounds/colored/*
-    ${lutgen}/bin/lutgen apply ${gp}/backgrounds/ -o ${gp}/backgrounds/colored -- "#ABCDEF" ${base01} ${base04} ${base05} ${base06} ${base07} ${base08} ${base09} ${base0A} ${base0B} ${base0C} ${base0D} ${base0E} ${base0F}
+    ${lutgen}/bin/lutgen apply ${gp}/backgrounds/${wn} -o ${gp}/backgrounds/colored -- "#ABCDEF" ${base01} ${base04} ${base05} ${base06} ${base07} ${base08} ${base09} ${base0A} ${base0B} ${base0C} ${base0D} ${base0E} ${base0F}
     sed -i "s/default.png/${wn}/g" ${gp}/theme.conf
 
     runHook postInstall
