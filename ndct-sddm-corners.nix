@@ -1,6 +1,5 @@
-{ stdenvNoCC
-, lib
-, fetchFromGitHub
+{ lib
+, stdenvNoCC
 , lutgen
 , version
 , base00 ? "262626"
@@ -24,12 +23,7 @@ stdenvNoCC.mkDerivation {
   pname = "ndct-sddm-corners";
   version = version;
 
-  src = fetchFromGitHub {
-    owner = "id3v1669";
-    repo = "ndct-sddm-corners";
-    rev = "72488ad33aa7bd7335b999cb5c38e8041b3e631e";
-    hash = "sha256-cnegaKN42Cg8ZoEhS4rq63wuk4NI/yXHNAktGDZ6A90=";
-  };
+  src = lib.cleanSource ./.;
 
   dontConfigure = true;
   dontBuild = true;
