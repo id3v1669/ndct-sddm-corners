@@ -9,12 +9,12 @@
   outputs = { self, nixpkgs, ... }:
   let
     version = builtins.substring 0 8 self.lastModifiedDate;
-    systemsAttr = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" ];
+    eachSystem = nixpkgs.lib.genAttrs (import systems);
   in
   {
-    packages = systemsAttr (system: {
+    packages = eachSystem (system: {
       ndct-sddm-corners = nixpkgs.legacyPackages.${system}.callPackage ./ndct-sddm-corners.nix { inherit version; };
     });
-    defaultPackage = systemsAttr (system: self.packages.${system}.ndct-sddm-corners);
+    defaultPackage = eachSystem (system: self.packages.${system}.ndct-sddm-corners);
   };
 }
