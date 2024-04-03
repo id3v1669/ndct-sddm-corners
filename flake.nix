@@ -6,7 +6,12 @@
     systems.url = "github:nix-systems/default-linux";
   };
 
-  outputs = { self, nixpkgs, ... }:
+  outputs = 
+  { self
+  , nixpkgs
+  , systems
+  , ... 
+  }:
   let
     version = builtins.substring 0 8 self.lastModifiedDate;
     eachSystem = nixpkgs.lib.genAttrs (import systems);
