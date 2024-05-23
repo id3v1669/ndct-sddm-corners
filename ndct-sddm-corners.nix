@@ -1,6 +1,7 @@
 { lib
 , stdenvNoCC
 , lutgen
+, libsForQt5
 , version
 , base00 ? "262626"
 , base01 ? "3a3a3a"
@@ -27,6 +28,20 @@ stdenvNoCC.mkDerivation {
 
   dontConfigure = true;
   dontBuild = true;
+  dontWrapQtApps = true;
+
+  propagatedBuildInputs = with libsForQt5.qt5; [
+    qtgraphicaleffects
+    qtquickcontrols2
+    qtsvg
+  ];
+
+  postFixup = ''
+    mkdir -p $out/nix-support
+    echo ${libsForQt5.qt5.qtgraphicaleffects}  >> $out/nix-support/propagated-user-env-packages
+    echo ${libsForQt5.qt5.qtquickcontrols2}  >> $out/nix-support/propagated-user-env-packages
+    echo ${libsForQt5.qt5.qtsvg}  >> $out/nix-support/propagated-user-env-packages
+  '';
 
   installPhase = 
   let 
@@ -35,7 +50,8 @@ stdenvNoCC.mkDerivation {
   in
   ''
     runHook preInstall
-    mkdir -p $out/share/sddm/themes/
+
+    mkdir -p ${gp}/backgrounds/colored
     cp -r ndct/ $out/share/sddm/themes/
     sed -i "s/d75f5f/${base08}/g" ${gp}/icons/power.svg
     sed -i "s/83adad/${base0D}/g" ${gp}/icons/restart.svg
@@ -44,7 +60,6 @@ stdenvNoCC.mkDerivation {
     sed -i "s/ebdbb2/${base07}/g" ${gp}/theme.conf
     sed -i "s/3a3a3a/${base01}/g" ${gp}/theme.conf
 
-    rm -rf ${gp}/backgrounds/colored/*
     ${lutgen}/bin/lutgen apply ${gp}/backgrounds/${wn} -o ${gp}/backgrounds/colored -- "#ABCDEF" ${base01} ${base04} ${base05} ${base06} ${base07} ${base08} ${base09} ${base0A} ${base0B} ${base0C} ${base0D} ${base0E} ${base0F}
     sed -i "s/default.png/${wn}/g" ${gp}/theme.conf
 
