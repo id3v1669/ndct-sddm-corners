@@ -1,7 +1,7 @@
 { lib
 , stdenvNoCC
 , lutgen
-, libsForQt5
+, qt5
 , version
 , base00 ? "262626"
 , base01 ? "3a3a3a"
@@ -30,7 +30,7 @@ stdenvNoCC.mkDerivation {
   dontBuild = true;
   dontWrapQtApps = true;
 
-  propagatedBuildInputs = with libsForQt5.qt5; [
+  propagatedBuildInputs = with qt5; [
     qtgraphicaleffects
     qtquickcontrols2
     qtsvg
@@ -38,9 +38,9 @@ stdenvNoCC.mkDerivation {
 
   postFixup = ''
     mkdir -p $out/nix-support
-    echo ${libsForQt5.qt5.qtgraphicaleffects}  >> $out/nix-support/propagated-user-env-packages
-    echo ${libsForQt5.qt5.qtquickcontrols2}  >> $out/nix-support/propagated-user-env-packages
-    echo ${libsForQt5.qt5.qtsvg}  >> $out/nix-support/propagated-user-env-packages
+    echo ${qt5.qtgraphicaleffects}  >> $out/nix-support/propagated-user-env-packages
+    echo ${qt5.qtquickcontrols2}  >> $out/nix-support/propagated-user-env-packages
+    echo ${qt5.qtsvg}  >> $out/nix-support/propagated-user-env-packages
   '';
 
   installPhase = 

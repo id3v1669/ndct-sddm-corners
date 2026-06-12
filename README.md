@@ -32,7 +32,7 @@ services.xserver = {
       sddm = {
         enable = true;
         extraPackages = with pkgs; [
-          libsForQt5.qt5.qtgraphicaleffects
+          qt5.qtgraphicaleffects
         ];
         theme = "ndct";
       };
