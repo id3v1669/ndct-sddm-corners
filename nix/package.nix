@@ -2,7 +2,9 @@
 , stdenvNoCC
 , lutgen
 , qt5
+, qt6
 , version
+, qtVersion ? 6
 , base00 ? "262626"
 , base01 ? "3a3a3a"
 , base02 ? "4e4e4e"
@@ -20,39 +22,59 @@
 , base0E ? "d485ad"
 , base0F ? "d65d0e"
 }:
+let
+  themeSrc = if qtVersion == 6 then "ndct-qt6" else "ndct-qt5";
+  qtDeps =
+    if qtVersion == 6
+    then (with qt6; [ qtdeclarative qtsvg ])
+    else (with qt5; [ qtgraphicaleffects qtquickcontrols2 qtsvg ]);
+in
 stdenvNoCC.mkDerivation {
   pname = "ndct-sddm-corners";
   version = version;
 
-  src = lib.cleanSource ./.;
+  src = lib.cleanSource ./..;
 
   dontConfigure = true;
   dontBuild = true;
   dontWrapQtApps = true;
 
-  propagatedBuildInputs = with qt5; [
-    qtgraphicaleffects
-    qtquickcontrols2
-    qtsvg
-  ];
+  propagatedBuildInputs = qtDeps;
 
   postFixup = ''
     mkdir -p $out/nix-support
-    echo ${qt5.qtgraphicaleffects}  >> $out/nix-support/propagated-user-env-packages
-    echo ${qt5.qtquickcontrols2}  >> $out/nix-support/propagated-user-env-packages
-    echo ${qt5.qtsvg}  >> $out/nix-support/propagated-user-env-packages
+    for dep in ${lib.concatStringsSep " " (map toString qtDeps)}; do
+      echo "$dep" >> $out/nix-support/propagated-user-env-packages
+    done
   '';
 
-  installPhase = 
-  let 
+  installPhase =
+  let
     gp = "$out/share/sddm/themes/ndct";
     wn = "default.png";
   in
   ''
     runHook preInstall
 
+    mkdir -p ${gp}
+    cp -r ${themeSrc}/. ${gp}/
     mkdir -p ${gp}/backgrounds/colored
-    cp -r ndct/ $out/share/sddm/themes/
+
+    cat > ${gp}/metadata.desktop <<EOF
+    [SddmGreeterTheme]
+    Name=ndct
+    Description=Nix Dynamic Color Theme for SDDM
+    Author=id3v1669
+    License=MIT
+    Type=sddm-theme
+    Version=${version}
+    Theme-Id=ndct
+    Theme-API=2.0
+    QtVersion=${toString qtVersion}
+    MainScript=Main.qml
+    ConfigFile=theme.conf
+    EOF
+
     sed -i "s/d75f5f/${base08}/g" ${gp}/icons/power.svg
     sed -i "s/83adad/${base0D}/g" ${gp}/icons/restart.svg
     sed -i "s/ffaf00/${base0A}/g" ${gp}/icons/sleep.svg

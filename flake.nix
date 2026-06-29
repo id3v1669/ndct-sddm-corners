@@ -18,7 +18,8 @@
   in
   {
     packages = eachSystem (system: {
-      ndct-sddm-corners = nixpkgs.legacyPackages.${system}.callPackage ./ndct-sddm-corners.nix { inherit version; };
+      ndct-sddm-corners = nixpkgs.legacyPackages.${system}.callPackage ./nix/package.nix { inherit version; qtVersion = 6; };
+      ndct-sddm-corners-qt5 = nixpkgs.legacyPackages.${system}.callPackage ./nix/package.nix { inherit version; qtVersion = 5; };
     });
     defaultPackage = eachSystem (system: self.packages.${system}.ndct-sddm-corners);
   };

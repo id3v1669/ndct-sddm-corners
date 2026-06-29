@@ -20,26 +20,21 @@ inputs.ndct-sddm.inputs.nixpkgs.follows = "nixpkgs";
 
 ...
 
+# default package output is the Qt6 build
 inputs.ndct-sddm.packages.${pkgs.hostPlatform.system}.ndct-sddm-corners
 
 ...
 
-services.xserver = {
-    enable = true;
-
-    libinput.enable = true;
-    displayManager = {
-      sddm = {
-        enable = true;
-        extraPackages = with pkgs; [
-          qt5.qtgraphicaleffects
-        ];
-        theme = "ndct";
-      };
-    };
-  };
-
+services.displayManager.sddm = {
+  enable = true;
+  package = pkgs.kdePackages.sddm; # Qt6 SDDM
+  theme = "ndct";
+};
 ```
+
+> The Qt6 theme needs no `extraPackages` — it propagates its own Qt deps
+> (`qtdeclarative`, `qtsvg`). For a Qt5 SDDM, use the `ndct-sddm-corners-qt5`
+> package output instead.
 
 ## Configuration
 
